@@ -4,8 +4,7 @@
   "builds": [
     {
       "src": "pages/api/index.js",
-      // Specify the NPM module that is used for the build
-      "use": "@now/node"
+      "use": "npm start"
     }
   ]
 }
