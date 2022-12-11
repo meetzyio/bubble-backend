@@ -18,7 +18,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/api', (req, res) => {
+app.get('/', (req, res) => {
   const path = `/api/item/${v4()}`;
   res.setHeader('Content-Type', 'text/html');
   res.setHeader(
@@ -28,7 +28,7 @@ app.get('/api', (req, res) => {
   res.end(`Hello! Go to item: <a href="${path}">${path}</a>`);
 });
 
-app.get('/api/fields', async (req, res) => {
+app.get('/fields', async (req, res) => {
   console.log('req params', req.params);
   console.log('req query', req.query);
   console.log('context: ', req.context);
