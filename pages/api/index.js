@@ -115,3 +115,6 @@ app.get('/api/fields', async (req, res) => {
 app.listen(process.env.PORT, () =>
   console.log(`Meetzy ready. port: ${process.env.PORT}!`),
 );
+
+
+module.exports = app;
