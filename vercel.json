@@ -3,7 +3,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "pages/api/index.js",
+      "src": "api/index.js",
       "use": "npm start"
     }
   ]
