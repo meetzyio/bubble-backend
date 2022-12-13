@@ -4,7 +4,6 @@ const endpointsURLs = new Map();
 endpointsURLs.set("forms", "https://api.hubapi.com/marketing/v3/forms/");
 
 async function fetch(object, id, access_token) {
-  console.log("url: ", endpointsURLs.get(object) + id);
   try {
     return (
       await axios({
@@ -16,7 +15,7 @@ async function fetch(object, id, access_token) {
       })
     ).data;
   } catch (e) {
-    console.log("ERROR:endpoints:hubspot:fetch: ", e);
+    console.log("ERROR:endpoints:hubspot:fetch: ", e.response.data);
     return false;
   }
 }
@@ -33,7 +32,7 @@ async function get(object, access_token) {
       })
     ).data;
   } catch (e) {
-    console.log("ERROR: ", e);
+    console.log("ERROR: ", e.response.data);
     return false;
   }
 }
