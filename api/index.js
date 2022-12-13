@@ -34,7 +34,6 @@ app.get('/api/fields', async (req, res) => {
   console.log('context: ', req.context);
 
   /*
-
   req.query{
     crm_form_id
     bubble_form_id
