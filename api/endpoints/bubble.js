@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../node_modules/axios/dist/node/axios.cjs";
 
 const bubble_url = "https://meetzyv2.bubbleapps.io/version-test/api/1.1/obj/";
 

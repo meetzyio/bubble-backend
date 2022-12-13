@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios from "../../node_modules/axios/dist/node/axios.cjs";
+
 
 const endpointsURLs = new Map();
 endpointsURLs.set("forms", "https://api.hubapi.com/marketing/v3/forms/");
