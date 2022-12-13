@@ -28,6 +28,8 @@ app.get('/api', (req, res) => {
   res.end(`Hello! Go to item: <a href="${path}">${path}</a>`);
 });
 
+
+
 app.get('/api/fields', async (req, res) => {
   console.log('req params', req.params);
   console.log('req query', req.query);
