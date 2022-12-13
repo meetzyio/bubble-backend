@@ -29,7 +29,7 @@ app.get('/api', (req, res) => {
 
 
 
-app.get('/api/fields', async (req, res) => {
+app.get('/fields', async (req, res) => {
   console.log('req params', req.params);
   console.log('req query', req.query);
   console.log('context: ', req.context);
