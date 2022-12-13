@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/api', (req, res) => {
-  const path = `/api/item/${v4()}`;
+  const path = `/api/fields`;
   res.setHeader('Content-Type', 'text/html');
   res.setHeader(
     'Cache-Control',
