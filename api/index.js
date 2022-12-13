@@ -2,7 +2,6 @@ import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
 const { v4 } = require('uuid');
-
 import bubble from './endpoints/bubble';
 import hubspot from './endpoints/hubspot';
 
