@@ -167,10 +167,47 @@ app.get('/ai', async (req, res) => {
   //SHOW RESULT
     console.log("res: ",completion.data)
 
-    res.json({
-      email:templateEnrichment.email,
-      qualified:completion.data.choices[0].text.includes("true")
-    })
+    //check is qualified
+      let isQualified=completion.data.choices[0].text.includes("true")
+    
+      if(isQualified){
+
+        //GET PERFECT AGENT AND READ SLOT DATA
+            //TO-DO
+
+        //FORMAT BUSY SLOTS DATA
+            let templateBusySlots=[
+                  {
+                    start:new Date(),
+                    end:new Date()+1
+                  },
+                  {
+                    start:new Date()+2,
+                    end:new Date()+3
+                  },
+                  {
+                    start:new Date()+3,
+                    end:new Date()+4
+                  }
+                ]
+        //RESPONSE true
+            res.json({
+              email:templateEnrichment.email,
+              qualified:true, 
+              busySlots:templateBusySlots
+            })
+      }
+      else{ //NON QUALIFIED
+
+        //RESPONSE false
+            res.json({
+              email:templateEnrichment.email,
+              qualified:false
+            })
+      }
+
+
+    
 
 });
 
