@@ -1,11 +1,13 @@
 import 'dotenv/config';
 import cors from 'cors';
+import qs from 'qs';
 import express from 'express';
 const { v4 } = require('uuid');
 import bubble from './endpoints/bubble';
 import hubspot from './endpoints/hubspot';
 import templateEnrichment from './templates/enrichment';
 import templateEnrichment from './templates/enrichment';
+import axios from 'axios';
 const { Configuration, OpenAIApi } = require("openai");
 
 
@@ -29,6 +31,29 @@ app.get('/api', (req, res) => {
     's-max-age=1, stale-while-revalidate',
   );
   res.end(`Hello! Go to item: <a href="${path}">${path}</a>`);
+});
+
+
+app.get('/token', async (req, res) => {
+
+  let outlookData= await axios({
+      method: 'post',
+      url: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+      headers: { 
+        'Content-Type': 'application/x-www-form-urlencoded', 
+        'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd'
+      },
+      data:qs.stringify({
+        'code': req.query.code,
+        'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
+        'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
+        'redirect_uri': 'https://app.meetzy.io/version-test/portal/links',
+        'grant_type': 'authorization_code' 
+      })
+    })
+
+      res.json(outlookData)
+
 });
 
 
