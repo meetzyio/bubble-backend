@@ -5,8 +5,6 @@ import express from 'express';
 const { v4 } = require('uuid');
 import bubble from './endpoints/bubble';
 import hubspot from './endpoints/hubspot';
-import templateEnrichment from './templates/enrichment';
-import templateEnrichment from './templates/enrichment';
 import axios from 'axios';
 const { Configuration, OpenAIApi } = require("openai");
 
