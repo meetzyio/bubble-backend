@@ -22,35 +22,54 @@ app.use((req, res, next) => {
 });
 
 app.get('/api', (req, res) => {
-  const path = `/api/fields`;
-  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Content-Type', 'application/json');
   res.setHeader(
     'Cache-Control',
     's-max-age=1, stale-while-revalidate',
   );
-  res.end(`Hello! Go to item: <a href="${path}">${path}</a>`);
+  res.json({success:true})
 });
 
 
+//generate a simple funcion
+
+
+
 app.get('/token', async (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
 
-  let outlookData= await axios({
-      method: 'post',
-      url: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-      headers: { 
-        'Content-Type': 'application/x-www-form-urlencoded', 
-        'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd'
-      },
-      data:qs.stringify({
-        'code': req.query.code,
-        'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
-        'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
-        'redirect_uri': 'https://app.meetzy.io/version-test/portal/links',
-        'grant_type': 'authorization_code' 
+  console.log("code: ",req.query.code)
+  console.log("data: ",qs.stringify({
+    'code': req.query.code,
+    'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
+    'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
+    'redirect_uri': 'https://app.meetzy.io/version-test/portal/links',
+    'grant_type': 'authorization_code' 
+  }))
+
+  try{
+    let outlookData= await axios({
+        method: 'post',
+        url: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+        headers: { 
+          'Content-Type': 'application/x-www-form-urlencoded', 
+          'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd'
+        },
+        data:qs.stringify({
+          'code': req.query.code,
+          'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
+          'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
+          'redirect_uri': 'https://app.meetzy.io/version-test/portal/links',
+          'grant_type': 'authorization_code' 
+        })
       })
-    })
 
-      res.json(outlookData)
+        console.log("response: ",outlookData.data)
+        res.json(outlookData.data)
+    }catch(e){
+      console.log(e)
+      res.json({error:true,message:e.message})
+    }
 
 });
 
