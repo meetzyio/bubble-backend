@@ -1,32 +1,43 @@
 import 'dotenv/config';
-import cors from 'cors';
-import qs from 'qs';
-import express from 'express';
-const { v4 } = require('uuid');
-import bubble from './endpoints/bubble';
-import hubspot from './endpoints/hubspot';
-import axios from 'axios';
-const { Configuration, OpenAIApi } = require("openai");
+
+//PUBLIC LIBS
+  import cors from 'cors';
+  import qs from 'qs';
+  import express from 'express';
+  const { v4 } = require('uuid');
+  var parser = require('tld-extract');
+  import axios from 'axios';
+  const { Configuration, OpenAIApi } = require("openai");
+
+//LOCAL LIBS
+  import bubble from './endpoints/bubble';
+  import hubspot from './endpoints/hubspot';
+  import enrich from './endpoints/enrich';
+
+//SETUP
+  const app = express();
+  app.use(cors());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+
+  app.use((req, res, next) => {
+    req.context = {
+      bubble_api_key: process.env.bubble_api_key,
+    };
+    next();
+  });
 
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.context = {
-    bubble_api_key: process.env.bubble_api_key,
-  };
-  next();
-});
+//ENDPOINTS
 
-app.get('/api', (req, res) => {
+app.get('/api', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.setHeader(
     'Cache-Control',
     's-max-age=1, stale-while-revalidate',
   );
+
   res.json({success:true})
 });
 
@@ -34,7 +45,7 @@ app.get('/api', (req, res) => {
 //generate a simple funcion
 
 
-
+// AND ENDPOINT TO GET THE OUTLOOK TOKEN
 app.get('/token', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
@@ -76,96 +87,17 @@ app.get('/token', async (req, res) => {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //OPEN AI - GPT-3 - ENDPOINT
-
-
-
 app.get('/ai', async (req, res) => {
+  console.log("query: ",req.query)
 
   //ENRICHEMNT WITH CLEARBIT BASED ON EMAIL
 
-    //THIS A REAL TEMPLATE THAT CLEARBIT RESPONSE
-    // SEE THE DOC HERE https://dashboard.clearbit.com/docs?javascript#enrichment-api-person-api
-    let templateEnrichment={
-      "CRM":"Hubspot", //we could extract this info from the teck stack data of the company provided by clearbit 
-      "Sales Team Size":50, // we could extract this data from a meetzy form or from linkedin api /company endpoint
-      "Inbound traffic":150000, // we could extract this data from a meetzy form or semrush api
-      "id": "d54c54ad-40be-4305-8a34-0ab44710b90d",
-      "name": {
-        "fullName": "Alex MacCaw", //fullname
-        "givenName": "Alex",
-        "familyName": "MacCaw"
-      },
-      "email": "alex@alexmaccaw.com", //email
-      "location": "San Francisco, CA, US",
-      "timeZone": "America/Los_Angeles", //timezone
-      "utcOffset": -8, //offset
-      "geo": {
-        "city": "San Francisco",
-        "state": "California",
-        "stateCode": "CA",
-        "country": "United States", //country
-        "countryCode": "US", //country code
-        "lat": 37.7749295,
-        "lng": -122.4194155
-      },
-      "bio": "O'Reilly author, software engineer & traveller. Founder of https://clearbit.com",
-      "site": "http://alexmaccaw.com",
-      "avatar": "https://d1ts43dypk8bqh.cloudfront.net/v1/avatars/d54c54ad-40be-4305-8a34-0ab44710b90d",
-      "employment": {
-        "domain": "clearbit.com", //domain
-        "name": "Clearbit", //company
-        "title": "Co-founder, CEO", //job position
-        "role": "leadership", //role
-        "subRole": "ceo", 
-        "seniority": "executive" //seniority
-      },
-      "facebook": {
-        "handle": "amaccaw"
-      },
-      "github": {
-        "handle": "maccman",
-        "avatar": "https://avatars.githubusercontent.com/u/2142?v=2",
-        "company": "Clearbit",
-        "blog": "http://alexmaccaw.com",
-        "followers": 2932,
-        "following": 94
-      },
-      "twitter": {
-        "handle": "maccaw",
-        "id": "2006261",
-        "bio": "O'Reilly author, software engineer & traveller. Founder of https://clearbit.com",
-        "followers": 15248,
-        "following": 1711,
-        "location": "San Francisco",
-        "site": "http://alexmaccaw.com",
-        "avatar": "https://pbs.twimg.com/profile_images/1826201101/297606_10150904890650705_570400704_21211347_1883468370_n.jpeg"
-      },
-      "linkedin": {
-        "handle": "pub/alex-maccaw/78/929/ab5"
-      },
-      "googleplus": {
-        "handle": null
-      },
-      "gravatar": {
-        "handle": "maccman",
-        "urls": [
-          {
-            "value": "http://alexmaccaw.com",
-            "title": "Personal Website"
-          }
-        ],
-        "avatar": "http://2.gravatar.com/avatar/994909da96d3afaf4daaf54973914b64",
-        "avatars": [
-          {
-            "url": "http://2.gravatar.com/avatar/994909da96d3afaf4daaf54973914b64",
-            "type": "thumbnail"
-          }
-        ]
-      },
-      "fuzzy": false,
-      "emailProvider": false,
-      "indexedAt": "2016-11-07T00:00:00.000Z"
-    }
+    //THIS A REAL TEMPLATE THAT APOLLO RESPONSE
+    // SEE THE DOC HERE https://apolloio.github.io/apollo-api-docs/?shell#enrichment-api
+    let enrichment=await enrich.lead({
+      "email": req.query.email,
+      "domain": parser(req.query.email).domain
+    })
 
   //ENRICH WITH BUYING INTENT DATA (by clearbit)  
 
@@ -174,12 +106,18 @@ app.get('/ai', async (req, res) => {
 
   //READ CRITERIA FROM BUBBLE by CUSTOMER
 
-    let templateCriteria=`
+    /*let templateCriteria=`
           1 - Es un lead que usa un CRM entre los siguientes: Hubspot, Salesforce, Pipedrive
           2 - Es un lead que tiene mucho tráfico inbound: al menos 10.000 visitas al mes en su página web
-          3 - El número de comerciales que tiene su empresa es superior a 10
-          4 - El lead es un software engineer
-          5 - Vive en Estados Unidos
+          3 - El número de comerciales que tiene su organización es superior a 10
+          4 - El lead es un founder
+          5 - Vive en España
+    `*/
+    let templateCriteria=`
+          1 - Es un lead que usa un CRM entre los siguientes: Hubspot, Salesforce, Pipedrive
+          3 - El número de comerciales que tiene su organización es superior a 30
+          4 - El lead es un founder
+          5 - Vive en España
     `
   //CHECK LEAD DATA & CRITERIA WITH OPENAI
 
@@ -201,9 +139,9 @@ app.get('/ai', async (req, res) => {
 
           Entonces, pongamos un ejemplo en el que el lead que ha llegado tiene estas características: 
           
-          `+templateEnrichment+`
+          `+enrichment+`
           
-          ¿Se puede considerar un lead cualificado?`,
+          ¿Se puede considerar un lead cualificado? response a esta cuestión con un true o false`,
         });
 
   //SHOW RESULT
