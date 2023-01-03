@@ -7,9 +7,14 @@
       }
   ],
   "routes": [
+    {
+        "src": "/script",
+        "dest": "website-script/mz.js"
+    },
       {
           "src": "/(.*)",
           "dest": "api/index.js"
       }
+
   ]
 }
