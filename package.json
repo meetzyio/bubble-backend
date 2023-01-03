@@ -25,9 +25,9 @@
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "extract-domain": "^2.4.8",
     "openai": "^3.1.0",
     "qs": "^6.11.0",
-    "tld-extract": "^2.1.0",
     "uuid": "^3.4.0"
   }
 }

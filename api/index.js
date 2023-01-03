@@ -5,11 +5,12 @@ import 'dotenv/config';
   import qs from 'qs';
   import express from 'express';
   const { v4 } = require('uuid');
-  var parser = require('tld-extract');
+  const extractDomain = require("extract-domain");
   import axios from 'axios';
   const { Configuration, OpenAIApi } = require("openai");
 
 //LOCAL LIBS
+  import orgs from './salescontactlist.json'
   import bubble from './endpoints/bubble';
   import hubspot from './endpoints/hubspot';
   import enrich from './endpoints/enrich';
@@ -38,7 +39,28 @@ app.get('/api', async (req, res) => {
     's-max-age=1, stale-while-revalidate',
   );
 
-  res.json({success:true})
+
+  let orgEnriched=[]
+  orgs.forEach(org => {
+
+    //http://www.bedurestaurant.com no funciona
+
+    if(org)
+    {
+      console.log(org.primary_domain + ","+org.alexa_ranking+","+org.country+","+org.departmental_head_count.sales+"|")
+    }    
+
+    /*orgEnriched.push({
+      domain: org.primary_domain?org.primary_domain:org.website_url,
+      alexa:org.alexa_ranking,
+      country:org.country,
+      sales_team_size:org.departmental_head_count.sales
+    })*/
+  });
+
+  res.json({
+    success:true
+  })
 });
 
 
@@ -90,102 +112,121 @@ app.get('/token', async (req, res) => {
 app.get('/ai', async (req, res) => {
   console.log("query: ",req.query)
 
-  //ENRICHEMNT WITH CLEARBIT BASED ON EMAIL
+  let email=req.query.email
 
-    //THIS A REAL TEMPLATE THAT APOLLO RESPONSE
-    // SEE THE DOC HERE https://apolloio.github.io/apollo-api-docs/?shell#enrichment-api
-    let enrichment=await enrich.lead({
-      "email": req.query.email,
-      "domain": parser(req.query.email).domain
+  if(email){
+
+    //ENRICHEMNT WITH CLEARBIT BASED ON EMAIL
+
+      //THIS A REAL TEMPLATE THAT APOLLO RESPONSE
+      // SEE THE DOC HERE https://apolloio.github.io/apollo-api-docs/?shell#enrichment-api
+      let enrichment=await enrich.lead({
+        "email": email,
+        "domain": extractDomain(email)
+      })
+
+      
+
+    //ENRICH WITH BUYING INTENT DATA (by clearbit)  
+
+        //TO-DO
+
+
+    //READ CRITERIA FROM BUBBLE by CUSTOMER
+
+      /*let templateCriteria=`
+            1 - Es un lead que usa un CRM entre los siguientes: Hubspot, Salesforce, Pipedrive
+            2 - Es un lead que tiene mucho tráfico inbound: al menos 10.000 visitas al mes en su página web
+            3 - El número de comerciales que tiene su organización es superior a 10
+            4 - El lead es un founder
+            5 - Vive en España
+      `*/
+      let templateCriteria=`
+            1 - The organization of the lead use one of this CRM: Hubspot, Salesforce, Pipedrive
+            2 - The organization of the lead has more than 10 people in the sales department
+            3 - The lead works as founder
+            4 - The lead live in Spain
+      `
+    //CHECK LEAD DATA & CRITERIA WITH OPENAI
+
+        //SETUP OPENAPI
+          const configuration = new Configuration({
+            organization:process.env.OPENAI_ORGANIZATION,
+            apiKey: process.env.OPENAI_API_KEY,
+          });
+
+        //INIT OPENAI
+          const openai = new OpenAIApi(configuration);
+          let completion
+          try{
+            //EXECUTE OPENAI
+              completion = await openai.createCompletion({
+                model: "text-davinci-002",
+                temperature:0.7,
+                prompt: `Quiero cualificar leads segun estos criterios:
+                
+                `+templateCriteria+`
+
+                Entonces, pongamos un ejemplo en el que el lead que ha llegado tiene estas características: 
+                
+                `+enrichment+`
+                
+                ¿Se puede considerar un lead cualificado?`,
+              });
+
+            //SHOW RESULT
+              console.log("res: ",completion.data)
+
+          }catch(e){
+            console.log("ERROR OPENAI: ",e.message)
+          }
+
+      //check is qualified
+        let isQualified=completion.data.choices[0].text.includes("true")
+      
+        if(isQualified){
+
+          //GET PERFECT AGENT AND READ SLOT DATA
+              //TO-DO
+
+          //FORMAT BUSY SLOTS DATA
+              let templateBusySlots=[
+                    {
+                      start:new Date(),
+                      end:new Date()+1
+                    },
+                    {
+                      start:new Date()+2,
+                      end:new Date()+3
+                    },
+                    {
+                      start:new Date()+3,
+                      end:new Date()+4
+                    }
+                  ]
+          //RESPONSE true
+              res.json({
+                email:email,
+                qualified:true, 
+                busySlots:templateBusySlots
+              })
+        }
+        else{ //NON QUALIFIED
+
+          //RESPONSE false
+              res.json({
+                email:email,
+                qualified:false
+              })
+        }
+  }
+  else{
+    res.json({
+      error:true,
+      message:"no email received"
     })
-
-  //ENRICH WITH BUYING INTENT DATA (by clearbit)  
-
-      //TO-DO
-
-
-  //READ CRITERIA FROM BUBBLE by CUSTOMER
-
-    /*let templateCriteria=`
-          1 - Es un lead que usa un CRM entre los siguientes: Hubspot, Salesforce, Pipedrive
-          2 - Es un lead que tiene mucho tráfico inbound: al menos 10.000 visitas al mes en su página web
-          3 - El número de comerciales que tiene su organización es superior a 10
-          4 - El lead es un founder
-          5 - Vive en España
-    `*/
-    let templateCriteria=`
-          1 - Es un lead que usa un CRM entre los siguientes: Hubspot, Salesforce, Pipedrive
-          3 - El número de comerciales que tiene su organización es superior a 30
-          4 - El lead es un founder
-          5 - Vive en España
-    `
-  //CHECK LEAD DATA & CRITERIA WITH OPENAI
-
-      //SETUP OPENAPI
-        const configuration = new Configuration({
-          organization:process.env.OPENAI_ORGANIZATION,
-          apiKey: process.env.OPENAI_API_KEY,
-        });
-
-      //INIT OPENAI
-        const openai = new OpenAIApi(configuration);
-
-      //EXECUTE OPENAI
-        const completion = await openai.createCompletion({
-          model: "text-davinci-002",
-          prompt: `Quiero cualificar leads segun estos criterios:
-          
-          `+templateCriteria+`
-
-          Entonces, pongamos un ejemplo en el que el lead que ha llegado tiene estas características: 
-          
-          `+enrichment+`
-          
-          ¿Se puede considerar un lead cualificado? response a esta cuestión con un true o false`,
-        });
-
-  //SHOW RESULT
-    console.log("res: ",completion.data)
-
-    //check is qualified
-      let isQualified=completion.data.choices[0].text.includes("true")
-    
-      if(isQualified){
-
-        //GET PERFECT AGENT AND READ SLOT DATA
-            //TO-DO
-
-        //FORMAT BUSY SLOTS DATA
-            let templateBusySlots=[
-                  {
-                    start:new Date(),
-                    end:new Date()+1
-                  },
-                  {
-                    start:new Date()+2,
-                    end:new Date()+3
-                  },
-                  {
-                    start:new Date()+3,
-                    end:new Date()+4
-                  }
-                ]
-        //RESPONSE true
-            res.json({
-              email:templateEnrichment.email,
-              qualified:true, 
-              busySlots:templateBusySlots
-            })
-      }
-      else{ //NON QUALIFIED
-
-        //RESPONSE false
-            res.json({
-              email:templateEnrichment.email,
-              qualified:false
-            })
-      }
-
+  }
+  
 
     
 
