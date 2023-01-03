@@ -64,10 +64,7 @@ app.get('/api', async (req, res) => {
 });
 
 
-//generate a simple funcion
-
-
-// AND ENDPOINT TO GET THE OUTLOOK TOKEN
+// AN ENDPOINT TO GET THE OUTLOOK TOKEN
 app.get('/token', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
@@ -108,7 +105,7 @@ app.get('/token', async (req, res) => {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-//OPEN AI - GPT-3 - ENDPOINT
+// OPEN AI - GPT-3 - ENDPOINT
 app.get('/ai', async (req, res) => {
   console.log("query: ",req.query)
 
@@ -126,6 +123,26 @@ app.get('/ai', async (req, res) => {
       })
 
       
+    //ENRICH WITH IP DATA
+      
+      /*
+
+      curl ipinfo.io/213.98.255.186?token=029b39acdb71ff
+
+      RESPONSE
+      {
+      "ip": "213.98.255.186",
+      "hostname": "186.red-213-98-255.staticip.rima-tde.net",
+      "city": "Madrid",
+      "region": "Madrid",
+      "country": "ES",
+      "loc": "40.4165,-3.7026",
+      "org": "AS3352 TELEFONICA DE ESPANA S.A.U.",
+      "postal": "28001",
+      "timezone": "Europe/Madrid"
+      }
+      
+      */
 
     //ENRICH WITH BUYING INTENT DATA (by clearbit)  
 
@@ -231,9 +248,6 @@ app.get('/ai', async (req, res) => {
     
 
 });
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 
