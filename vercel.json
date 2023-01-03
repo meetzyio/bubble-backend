@@ -10,11 +10,7 @@
     {
         "src": "/public",
         "dest": "public/index.html"
-    },
-      {
-          "src": "/(.*)",
-          "dest": "api/index.js"
-      }
+    }
 
   ]
 }
