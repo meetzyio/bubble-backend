@@ -172,7 +172,7 @@ app.post('/outlook/freebusy', async (req, res) => {
               data:json
             })
 
-          console.log("response: ",outlookData.data)
+          //console.log("response: ",outlookData.data)
 
           //PARSE DATA TO BUBBBLE FORMAT
               let responseJson={
@@ -276,6 +276,7 @@ app.post('/outlook/freebusy', async (req, res) => {
                 const calendar = outlookData.data.value[index];
 
                 for (const scheduleItem in calendar.scheduleItems) {
+                  console.log("scheduleItem: ",scheduleItem)
                   responseJson.freebusy.push({
                     start:scheduleItem.start.dateTime,
                     end:scheduleItem.end.dateTime,
