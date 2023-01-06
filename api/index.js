@@ -90,33 +90,52 @@ app.get('/token', async (req, res) => {
 });
 
 // AN ENDPOINT TO REFRESH AN ACCESS TOKEN FROM A REFRESH TOKEN
-app.post('/outlook/refresh_token', async (req, res) => {
+app.post('/outlook/token', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
   console.log("body",req.body)
 
-  try{
-    let outlookData= await axios({
-        method: 'post',
-        url: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-        headers: { 
-          'Content-Type': 'application/x-www-form-urlencoded', 
-          'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd'
-        },
-        data:qs.stringify({
+  //DETECT GRANT TYPE
+      let data;
+      if(req.body.grant_type=="authorization_code"){
+        data=qs.stringify({
+          'code': req.body.code,
+          'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
+          'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
+          'redirect_uri': 'https://app.meetzy.io/version-test/portal/links',
+          'grant_type': 'authorization_code' 
+        })
+      }
+      else if(req.body.grant_type=="refresh_token")
+      {
+        data=qs.stringify({
           'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
           'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
           'refresh_token': req.body.refresh_token,
           'grant_type': 'refresh_token' 
         })
-      })
+      }
 
-        console.log("response: ",outlookData.data)
-        res.json(outlookData.data)
-    }catch(e){
-      console.log(e)
-      res.json({error:true,message:e.message})
-    }
+  // EXECUTE ENDPOINT
+
+    try{
+
+          let outlookData= await axios({
+              method: 'post',
+              url: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+              headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded', 
+                'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd'
+              },
+              data:data
+            })
+
+          console.log("response: ",outlookData.data)
+          res.json(outlookData.data)
+      }catch(e){
+        console.log(e)
+        res.json({error:true,message:e.message})
+      }
 
 });
 
