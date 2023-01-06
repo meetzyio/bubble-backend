@@ -92,6 +92,8 @@ app.get('/token', async (req, res) => {
 app.post('/outlook/refresh_token', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
+  console.log("body",req.body)
+
   try{
     let outlookData= await axios({
         method: 'post',
