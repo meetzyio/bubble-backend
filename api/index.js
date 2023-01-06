@@ -183,7 +183,7 @@ app.post('/outlook/freebusy', async (req, res) => {
             })
             })
 
-          console.log("response: ",outlookData.data)
+          //console.log("response: ",outlookData.data)
 
           //PARSE DATA TO BUBBBLE FORMAT
             //-- TODO
