@@ -97,7 +97,7 @@ app.post('/outlook/token', async (req, res) => {
           'code': req.body.code,
           'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
           'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
-          'redirect_uri': 'https://app.meetzy.io/version-test/portal/links',
+          'redirect_uri': 'https://app.meetzy.io/portal/links',
           'grant_type': 'authorization_code' 
         })
       }
