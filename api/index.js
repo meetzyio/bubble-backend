@@ -140,6 +140,22 @@ app.post('/outlook/freebusy', async (req, res) => {
   console.log("body",req.body)
   // PARSE BODY 
       //-- TODO
+        console.log("req.body: ",req.body)
+
+      /**
+        {        
+          "Schedules": ["meetzy2@outlook.es"],
+          "StartTime": {
+              "dateTime": "2023-01-01T00:00:00",
+              "timeZone": "UTC"
+          },
+          "EndTime": {
+              "dateTime": "2023-01-06T23:00:00",
+              "timeZone": "UTC"
+          },
+          "availabilityViewInterval": "15"
+        } 
+      */
 
 
   // EXECUTE ENDPOINT
