@@ -96,9 +96,9 @@ app.post('/outlook/token', async (req, res) => {
   console.log("body",req.body)
 
   //DETECT GRANT TYPE
-      let data;
+      let querystring;
       if(req.body.grant_type=="authorization_code"){
-        data=qs.stringify({
+        querystring=qs.stringify({
           'code': req.body.code,
           'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
           'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
@@ -108,7 +108,7 @@ app.post('/outlook/token', async (req, res) => {
       }
       else if(req.body.grant_type=="refresh_token")
       {
-        data=qs.stringify({
+        querystring=qs.stringify({
           'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
           'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
           'refresh_token': req.body.refresh_token,
@@ -127,7 +127,7 @@ app.post('/outlook/token', async (req, res) => {
                 'Content-Type': 'application/x-www-form-urlencoded', 
                 'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd'
               },
-              data:data
+              data:querystring
             })
 
           console.log("response: ",outlookData.data)
