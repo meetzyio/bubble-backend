@@ -277,7 +277,7 @@ app.post('/outlook/freebusy', async (req, res) => {
               for (let index = 0; index < outlookData.data.value.length; index++) {
                 const calendar = outlookData.data.value[index];
 
-
+                console.log("calendar:",calendar)
                 for (let h = 0; h < calendar.scheduleItems.length; h++) {
                   let scheduleItem= calendar.scheduleItems[h];
                   console.log("scheduleItem: ",scheduleItem)
