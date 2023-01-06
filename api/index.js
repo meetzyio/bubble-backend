@@ -40,23 +40,6 @@ app.get('/api', async (req, res) => {
   );
 
 
-  let orgEnriched=[]
-  orgs.forEach(org => {
-
-    //http://www.bedurestaurant.com no funciona
-
-    if(org)
-    {
-      console.log(org.primary_domain + ","+org.alexa_ranking+","+org.country+","+org.departmental_head_count.sales+"|")
-    }    
-
-    /*orgEnriched.push({
-      domain: org.primary_domain?org.primary_domain:org.website_url,
-      alexa:org.alexa_ranking,
-      country:org.country,
-      sales_team_size:org.departmental_head_count.sales
-    })*/
-  });
 
   res.json({
     success:true
@@ -64,18 +47,20 @@ app.get('/api', async (req, res) => {
 });
 
 
-// AN ENDPOINT TO GET THE OUTLOOK TOKEN
+/** OUTLOOK */
+
+// AN ENDPOINT TO EXCHANGE THE CODE FOR THE OUTLOOK TOKEN
 app.get('/token', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
-  console.log("code: ",req.query.code)
+  /*console.log("code: ",req.query.code)
   console.log("data: ",qs.stringify({
     'code': req.query.code,
     'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
     'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
     'redirect_uri': 'https://app.meetzy.io/version-test/portal/links',
     'grant_type': 'authorization_code' 
-  }))
+  }))*/
 
   try{
     let outlookData= await axios({
@@ -102,6 +87,37 @@ app.get('/token', async (req, res) => {
     }
 
 });
+
+// AN ENDPOINT TO REFRESH AN ACCESS TOKEN FROM A REFRESH TOKEN
+app.post('/outlook/refresh_token', async (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+
+  try{
+    let outlookData= await axios({
+        method: 'post',
+        url: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+        headers: { 
+          'Content-Type': 'application/x-www-form-urlencoded', 
+          'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd'
+        },
+        data:qs.stringify({
+          'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
+          'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
+          'refresh_token': req.body.refresh_token,
+          'grant_type': 'refresh_token' 
+        })
+      })
+
+        console.log("response: ",outlookData.data)
+        res.json(outlookData.data)
+    }catch(e){
+      console.log(e)
+      res.json({error:true,message:e.message})
+    }
+
+});
+
+/* END OUTLOOK*/ 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
