@@ -130,7 +130,7 @@ app.post('/outlook/token', async (req, res) => {
               data:querystring
             })
 
-          console.log("response: ",outlookData.data)
+          //console.log("response: ",outlookData.data)
           res.json(outlookData.data)
       }catch(e){
         console.log(e)
