@@ -39,6 +39,7 @@ app.get('/api', async (req, res) => {
     's-max-age=1, stale-while-revalidate',
   );
 
+  console.log("API ok")
 
 
   res.json({
@@ -89,7 +90,7 @@ app.get('/token', async (req, res) => {
 });
 
 // AN ENDPOINT TO REFRESH AN ACCESS TOKEN FROM A REFRESH TOKEN
-app.post('/outlook/refresh_token', async (req, res) => {
+app.post('/refresh_token', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
   console.log("body",req.body)
