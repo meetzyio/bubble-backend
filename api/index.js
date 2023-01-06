@@ -272,6 +272,8 @@ app.post('/outlook/freebusy', async (req, res) => {
                   }
                   
               */
+
+              console.log("LOOP THE SCHEDULEITEMS")
               for (let index = 0; index < outlookData.data.value.length; index++) {
                 const calendar = outlookData.data.value[index];
 
@@ -286,7 +288,7 @@ app.post('/outlook/freebusy', async (req, res) => {
                 }
                 
               }
-
+              console.log("responseJson: ",responseJson)
           // SEND RESPONSE  
             res.json(responseJson)
 
