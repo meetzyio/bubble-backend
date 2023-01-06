@@ -138,24 +138,23 @@ app.post('/outlook/freebusy', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
   console.log("body",req.body)
+  console.log("body.calendars",req.body.calendars.split(","))
   // PARSE BODY 
       //-- TODO
-        console.log("req.body: ",req.body)
 
-      /**
-        {        
-          "Schedules": ["meetzy2@outlook.es"],
+      let json={        
+          "Schedules": req.body.calendars.split(",") ,
           "StartTime": {
-              "dateTime": "2023-01-01T00:00:00",
+              "dateTime": req.body.timeMin,
               "timeZone": "UTC"
           },
           "EndTime": {
-              "dateTime": "2023-01-06T23:00:00",
+              "dateTime": req.body.timeMax,
               "timeZone": "UTC"
           },
-          "availabilityViewInterval": "15"
+          "availabilityViewInterval": "30"
         } 
-      */
+      
 
 
   // EXECUTE ENDPOINT
@@ -164,34 +163,131 @@ app.post('/outlook/freebusy', async (req, res) => {
 
           let outlookData= await axios({
               method: 'post',
-              url: 'https://graph.microsoft.com/v1.0/me/calendar/getschedule',
+              url: 'https://graph.microsoft.com/v1.0/me/calendar/getSchedule',
               headers: { 
-                'Content-Type': 'application/x-www-form-urlencoded', 
-                'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd'
+                'Content-Type': 'application/json', 
+                'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
+                "Authorization":"Bearer "+req.body.token
               },
-              data:qs.stringify({        
-                "Schedules": ["meetzy2@outlook.es"],
-                "StartTime": {
-                    "dateTime": "2023-01-01T00:00:00",
-                    "timeZone": "Pacific Standard Time"
-                },
-                "EndTime": {
-                    "dateTime": "2023-01-06T23:00:00",
-                    "timeZone": "Pacific Standard Time"
-                },
-                "availabilityViewInterval": "15"
-            })
+              data:json
             })
 
-          //console.log("response: ",outlookData.data)
+          console.log("response: ",outlookData.data)
 
           //PARSE DATA TO BUBBBLE FORMAT
-            //-- TODO
-            
-          res.json(outlookData.data)
+              let responseJson={
+                success:true,
+                freebusy:[]
+              }
+
+          //LOOP THE OUTLOOK FREEBUSY RESPONSE
+
+              /*
+                  {
+                    '@odata.context': 'https://graph.microsoft.com/v1.0/$metadata#Collection(microsoft.graph.scheduleInformation)',
+                    value: [
+                      {
+                        scheduleId: 'meetzy2@outlook.es',
+                        availabilityView: '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+                        scheduleItems: [
+                          {
+                              "isPrivate": false,
+                              "status": "busy",
+                              "subject": "Let's go for lunch",
+                              "location": "Harry's Bar",
+                              "start": {
+                                  "dateTime": "2019-03-15T12:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              },
+                              "end": {
+                                  "dateTime": "2019-03-15T14:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              }
+                          }
+                        ],
+                        workingHours: [Object]
+                      },
+                      {
+                        scheduleId: 'meetzy2@outlook.es',
+                        availabilityView: '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+                        scheduleItems: [{
+                              "status": "busy",
+                              "start": {
+                                  "dateTime": "2019-03-15T08:30:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              },
+                              "end": {
+                                  "dateTime": "2019-03-15T09:30:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              }
+                          },
+                          {
+                              "status": "busy",
+                              "start": {
+                                  "dateTime": "2019-03-15T12:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              },
+                              "end": {
+                                  "dateTime": "2019-03-15T14:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              }
+                          },
+                          {
+                              "status": "tentative",
+                              "start": {
+                                  "dateTime": "2019-03-15T12:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              },
+                              "end": {
+                                  "dateTime": "2019-03-15T13:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              }
+                          },
+                          {
+                              "status": "busy",
+                              "start": {
+                                  "dateTime": "2019-03-15T13:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              },
+                              "end": {
+                                  "dateTime": "2019-03-15T14:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              }
+                          },
+                          {
+                              "status": "tentative",
+                              "start": {
+                                  "dateTime": "2019-03-15T16:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              },
+                              "end": {
+                                  "dateTime": "2019-03-15T17:00:00.0000000",
+                                  "timeZone": "Pacific Standard Time"
+                              }
+                          }
+                        ],
+                        workingHours: [Object]
+                      }
+                    ]
+                  }
+                  
+              */
+              for (let index = 0; index < outlookData.data.value.length; index++) {
+                const calendar = outlookData.data.value[index];
+
+                for (const scheduleItem in calendar.scheduleItems) {
+                  responseJson.freebusy.push({
+                    start:scheduleItem.start.dateTime,
+                    end:scheduleItem.end.dateTime,
+                  })
+                }
+              }
+
+          // SEND RESPONSE  
+            res.json(responseJson)
 
       }catch(e){
-        console.log(e)
+        console.log(e.response)
         res.json({error:true,message:e.message})
       }
 
