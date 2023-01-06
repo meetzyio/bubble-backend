@@ -51,17 +51,9 @@ app.get('/api', async (req, res) => {
 /** OUTLOOK */
 
 // AN ENDPOINT TO EXCHANGE THE CODE FOR THE OUTLOOK TOKEN
-app.get('/token', async (req, res) => {
+/*app.get('/token', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
-  /*console.log("code: ",req.query.code)
-  console.log("data: ",qs.stringify({
-    'code': req.query.code,
-    'client_id': '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
-    'client_secret': 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
-    'redirect_uri': 'https://app.meetzy.io/version-test/portal/links',
-    'grant_type': 'authorization_code' 
-  }))*/
 
   try{
     let outlookData= await axios({
@@ -87,9 +79,12 @@ app.get('/token', async (req, res) => {
       res.json({error:true,message:e.message})
     }
 
-});
+});*/
 
-// AN ENDPOINT TO REFRESH AN ACCESS TOKEN FROM A REFRESH TOKEN
+// AN ENDPOINT TO 
+// -EXCHANGE THE CODE FOR THE OUTLOOK TOKEN
+// OR
+// -REFRESH AN ACCESS TOKEN FROM A REFRESH TOKEN
 app.post('/outlook/token', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
@@ -132,6 +127,53 @@ app.post('/outlook/token', async (req, res) => {
 
           //console.log("response: ",outlookData.data)
           res.json(outlookData.data)
+      }catch(e){
+        console.log(e)
+        res.json({error:true,message:e.message})
+      }
+
+});
+
+app.post('/outlook/freebusy', async (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+
+  console.log("body",req.body)
+  // PARSE BODY 
+      //-- TODO
+
+
+  // EXECUTE ENDPOINT
+
+    try{
+
+          let outlookData= await axios({
+              method: 'post',
+              url: 'https://graph.microsoft.com/v1.0/me/calendar/getschedule',
+              headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded', 
+                'Cookie': 'fpc=AoMnHEdDJI5HsOlA87wtr0ITIShSAgAAAJ_jM9sOAAAAFIFrmwIAAABg5DPbDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd'
+              },
+              data:qs.stringify({        
+                "Schedules": ["meetzy2@outlook.es"],
+                "StartTime": {
+                    "dateTime": "2023-01-01T00:00:00",
+                    "timeZone": "Pacific Standard Time"
+                },
+                "EndTime": {
+                    "dateTime": "2023-01-06T23:00:00",
+                    "timeZone": "Pacific Standard Time"
+                },
+                "availabilityViewInterval": "15"
+            })
+            })
+
+          console.log("response: ",outlookData.data)
+
+          //PARSE DATA TO BUBBBLE FORMAT
+            //-- TODO
+            
+          res.json(outlookData.data)
+
       }catch(e){
         console.log(e)
         res.json({error:true,message:e.message})
