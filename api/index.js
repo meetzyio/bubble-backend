@@ -90,7 +90,7 @@ app.get('/token', async (req, res) => {
 });
 
 // AN ENDPOINT TO REFRESH AN ACCESS TOKEN FROM A REFRESH TOKEN
-app.post('/refresh_token', async (req, res) => {
+app.post('/outlook/refresh_token', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
   console.log("body",req.body)
