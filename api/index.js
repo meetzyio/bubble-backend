@@ -278,13 +278,17 @@ app.post('/outlook/freebusy', async (req, res) => {
                 const calendar = outlookData.data.value[index];
 
                 console.log("calendar:",calendar)
-                for (let h = 0; h < calendar.scheduleItems.length; h++) {
-                  let scheduleItem= calendar.scheduleItems[h];
-                  console.log("scheduleItem: ",scheduleItem)
-                  responseJson.freebusy.push({
-                    start:scheduleItem.start.dateTime,
-                    end:scheduleItem.end.dateTime,
-                  })
+                if(!calendar.error){
+                  for (let h = 0; h < calendar.scheduleItems.length; h++) {
+                    let scheduleItem= calendar.scheduleItems[h];
+                    console.log("scheduleItem: ",scheduleItem)
+
+                    //2023-01-09T07:30:00.0000000
+                    responseJson.freebusy.push({
+                      start:scheduleItem.start.dateTime.replace(".0000000","Z"),
+                      end:scheduleItem.end.dateTime.replace(".0000000","Z"),
+                    })
+                  }
                 }
                 
               }
