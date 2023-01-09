@@ -130,6 +130,7 @@ app.post('/calendar/freebusy', async (req, res) => {
         //PARSE BODY
 
             //PARSE CALENDARS
+                let calendarsIdsArray=[];
                 let calendarStringsArray=req.body.calendars.replace(" ","").split(',');
                 //LOOP THE CALENDARS
                     calendarStringsArray.forEach(calendarString => {
