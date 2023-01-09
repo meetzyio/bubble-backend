@@ -136,7 +136,7 @@ app.post('/calendar/freebusy', async (req, res) => {
                     calendarStringsArray.forEach(calendarString => {
                       calendarsIdsArray.push({"id":calendarString.trim()})
                     });
-
+                console.log("parse calendars ok")
             // BUILD DATA TO POST
                 var json = JSON.stringify({
                   "timeMin":req.body.timeMin,
@@ -145,6 +145,7 @@ app.post('/calendar/freebusy', async (req, res) => {
                   "calendarExpansionMax":10,
                   "groupExpansionMax":10
                 });
+                console.log("BUILD DATA TO POST")
 
 
         //EXECUTE ENDPOINT
@@ -160,6 +161,7 @@ app.post('/calendar/freebusy', async (req, res) => {
                   data:json
                 })
 
+                console.log("responseFreebusy: ",responseFreebusy)
                 //PARSE DATA TO BUBBBLE FORMAT
                     let responseJson={
                       success:true,
