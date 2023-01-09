@@ -145,7 +145,7 @@ app.post('/calendar/freebusy', async (req, res) => {
                   "calendarExpansionMax":10,
                   "groupExpansionMax":10
                 });
-                console.log("BUILD DATA TO POST")
+                console.log("BUILD DATA TO POST: ",json)
 
 
         //EXECUTE ENDPOINT
