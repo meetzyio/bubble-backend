@@ -181,7 +181,7 @@ app.post('/calendar/freebusy', async (req, res) => {
                  // SEND RESPONSE  
                      res.json(responseJson)
             }catch(e){
-              console.log(e.response)
+              console.log(e.message)
               res.json({error:true,provider:"Google Calendar",message:e.message})
             }
 
