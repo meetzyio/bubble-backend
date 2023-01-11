@@ -48,7 +48,7 @@ app.get('/api', async (req, res) => {
 });
 
 
-app.post('/deltaFunction', async (req, res) => {
+app.get('/deltaFunction', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
   let token=req.query.token;
