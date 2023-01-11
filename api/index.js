@@ -48,6 +48,68 @@ app.get('/api', async (req, res) => {
 });
 
 
+app.post('/deltaFunction', async (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+
+  let token=req.query.token;
+  let why=req.query.why;
+  let resp="";
+
+  if(token == "y2o4gt9bviey"){ //Contactanos
+    if(why == 1) resp = '"engine_1" : "iso27001"'
+    else if(why == 2) resp = '"engine_1" : "otrascertificaciones"'
+    else if(why == 3) resp = '"engine_1" : "regulacionbancaria"'
+    else if(why == 4) resp = '"engine_1" : "fallasdeseguridad"'
+    else if(why == 5) resp = '"engine_1" : "monitoreardarkweb"'
+    else if(why == 6) resp = '"engine_1" : "concientizar"'
+    else if(why == 7) resp = '"engine_1" : "estrategia"'
+    else if(why == 8) resp = '"engine_1" : "hackeo"'
+    else if(why == 9) resp = '"engine_1" : "otra"'
+  }
+  else if (token == "dlsmcryddjjh"){ //Apolo
+    if(why == 1) resp = '"engine_2" : "apoloiso27001"'
+    else if(why == 2) resp = '"engine_2" : "apolofallasdeseguridad"'
+    else if(why == 3) resp = '"engine_2" : "apolodarkweb"'
+    else if(why == 4) resp = '"engine_2" : "apolophishing"'
+    else if(why == 5) resp = '"engine_2" : "apoloconocer"'
+    else if(why == 6) resp = '"engine_2" : "apoloterceros"'
+    else if(why == 7) resp = '"engine_2" : "apolootra"'
+  }
+  else if (token == "ngqktdvphfdw"){ //CISO as a Service
+    if(why == 1) resp = '"engine_3" : "cisocertificacion"'
+    else if(why == 2) resp = '"engine_3" : "cisofintech"'
+    else if(why == 3) resp = '"engine_3" : "cisomantener"'
+    else if(why == 4) resp = '"engine_3" : "cisophishing"'
+    else if(why == 5) resp = '"engine_3" : "cisoseguridad"'
+    else if(why == 6) resp = '"engine_3" : "cisoterceros"'
+    else if(why == 7) resp = '"engine_3" : "cisomasseguro"'
+    else if(why == 8) resp = '"engine_3" : "cisootra"'
+  }
+  else if (token == "yabj1v3s8uxj"){ //Pentesting
+    if(why == 1) resp = '"engine_4" : "pentestingtercero"'
+    else if(why == 2) resp = '"engine_4" : "pentestingvulnerabilidad"'
+    else if(why == 3) resp = '"engine_4" : "pentestingusuarios"'
+    else if(why == 4) resp = '"engine_4" : "pentestingotra"'
+  }
+  else if (token == "unixxay9ggle"){ //AnÃ¡lisis de Vulnerabilidades
+    if(why == 1) resp = '"engine_5" : "avtercero"'
+    else if(why == 2) resp = '"engine_5" : "avdeteccion"'
+    else if(why == 3) resp = '"engine_5" : "avproteger"'
+    else if(why == 4) resp = '"engine_5" : "avotra"'
+  }
+  else if (token == "jqlkod4hl0sr"){ //Ciberinteligencia
+    if(why == 1) resp = '"engine_5" : "brechasdedatos"'
+    else if(why == 2) resp = '"engine_5" : "botnets"'
+    else if(why == 3) resp = '"engine_5" : "mencionesdarkweb"'
+    else if(why == 4) resp = '"engine_5" : "ciberinteligenciaotra"'
+  }
+
+  res.send(resp)
+
+})
+
+
+
 
 app.post('/calendar/freebusy', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
@@ -71,8 +133,6 @@ app.post('/calendar/freebusy', async (req, res) => {
                 },
                 "availabilityViewInterval": "30"
               } 
-            
-
 
         // EXECUTE ENDPOINT
 
