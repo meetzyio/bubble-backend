@@ -1,8 +1,4 @@
 
-## Installation
-
-* `git clone git@github.com:rwieruch/node-express-server-rest-api.git`
-* `cd node-express-server-rest-api`
-* `npm install`
+## Start
 * `npm start`
 * optional: include *.env* in your *.gitignore*
