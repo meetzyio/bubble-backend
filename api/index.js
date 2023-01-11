@@ -299,7 +299,7 @@ app.post('/outlook/token', async (req, res) => {
         querystring=qs.stringify({
           'code': req.body.code,
           'client_id': 'adad837f-5e2d-4e98-8c61-52875394144f', //OLD '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
-          'client_secret': 'bd7c3a6c-9dca-4af3-ab73-c30d17d1ff07', //OLD 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
+          'client_secret': '6eb8Q~jAoOATb0yKrB0PWcUS4thYgd-URBo25czv', //OLD 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
           'redirect_uri': 'https://app.meetzy.io/portal/links',
           'grant_type': 'authorization_code' 
         })
@@ -308,7 +308,7 @@ app.post('/outlook/token', async (req, res) => {
       {
         querystring=qs.stringify({
           'client_id': 'adad837f-5e2d-4e98-8c61-52875394144f', //OLD '2c08c84c-c6d5-4e44-bc83-ffd97cf94a14',
-          'client_secret': 'bd7c3a6c-9dca-4af3-ab73-c30d17d1ff07', //OLD 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
+          'client_secret': '6eb8Q~jAoOATb0yKrB0PWcUS4thYgd-URBo25czv', //OLD 'aex8Q~xq4BR3la_iGIqU1rxnB30cyQMHT9bBZcKo',
           'refresh_token': req.body.refresh_token,
           'grant_type': 'refresh_token' 
         })
