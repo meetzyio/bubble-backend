@@ -48,6 +48,7 @@ app.get('/api', async (req, res) => {
 });
 
 
+/* DELTA PROTECT EXCEPTION */
 app.get('/deltaFunction', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
