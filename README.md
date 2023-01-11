@@ -1,5 +1,4 @@
 
-## Installation
-* `npm install`
+## Start
 * `npm start`
 * optional: include *.env* in your *.gitignore*
